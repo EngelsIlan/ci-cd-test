@@ -1,0 +1,36 @@
+name: Discord Webhook Notification
+
+on:
+    push:
+        branches:
+            - '**'
+
+jobs:
+    notify-push:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Send Discord Webhook for Push
+              env:
+                DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+              run: |
+                curl -H "Content-Type: application/json" \
+                  -d "{\"content\": \"A push has been made to branch: ${{ github.ref_name }} by ${{ github.actor }}.\"}" \
+                  $DISCORD_WEBHOOK_URL
+
+    notify-deployment:
+        needs: notify-push
+        runs-on: ubuntu-latest
+        if: ${{ always() }}
+        steps:
+            - name: Check Deployment Status
+              env:
+                DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+              run: |
+                if [[ "${{ needs.deploy.result }}" == "success" ]]; then
+                  STATUS="Deployment succeeded 🎉"
+                else
+                  STATUS="Deployment failed ❌"
+                fi
+                curl -H "Content-Type: application/json" \
+                  -d "{\"content\": \"${STATUS} for branch: ${{ github.ref_name }}.\"}" \
+                  $DISCORD_WEBHOOK_URL
