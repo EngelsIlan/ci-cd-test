@@ -28,3 +28,15 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
 
+      - name: Send Discord Webhook for Deployment
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          if [[ "${{ job.status }}" == "success" ]]; then
+            STATUS="Deployment succeeded 🎉"
+          else
+            STATUS="Deployment failed ❌"
+          fi
+          curl -H "Content-Type: application/json" \
+            -d "{\"content\": \"${STATUS} for branch: ${{ github.ref_name }}.\"}" \
+            $DISCORD_WEBHOOK_URL
