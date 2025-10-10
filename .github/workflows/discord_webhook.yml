@@ -6,18 +6,18 @@ on:
             - "**"
 
 jobs:
-    notify-push:
+    notify-pull_request:
         runs-on: ubuntu-latest
         env:
             DISCORD_GREEN: "3066993" # Green color
         steps:
-            - name: Send Discord Webhook for Push
+            - name: Send Discord Webhook for Pull Request
               uses: sarisia/actions-status-discord@v1
               with:
                   webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
                   status: ${{ job.status }}
-                  title: "Push Event Notification"
-                  description: "A push has been made to branch: ${{ github.ref_name }} by ${{ github.actor }}."
+                  title: "Pull Request Notification"
+                  description: "A pull request has been opened or updated on branch: ${{ github.ref_name }} by ${{ github.actor }}."
                   color: "${{ env.DISCORD_GREEN }}"
                   url: "${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
                   username: "GitHub Actions Bot"
