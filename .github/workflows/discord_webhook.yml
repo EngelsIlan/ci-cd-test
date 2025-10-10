@@ -17,6 +17,7 @@ jobs:
               uses: sarisia/actions-status-discord@v1
               with:
                   webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                  status: ${{ job.status}}
                   title: "🟢 New Pull Request Opened"
                   description: |
                       **${{ github.actor }}** opened a new pull request:
@@ -28,12 +29,12 @@ jobs:
                   username: "GitHub Actions Bot"
                   avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
 
-            - name: Send Discord Webhook for Approved Pull Request
+            - name: Send Discord Webhook for Reviewed & Approved Pull Request
               if: ${{ github.event_name == 'pull_request_review' && github.event.review.state == 'approved' }}
               uses: sarisia/actions-status-discord@v1
               with:
                   webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-                  status: success
+                  status: ${{ job.status}}
                   title: "✅ Pull Request Approved"
                   description: |
                       **${{ github.actor }}** approved the pull request:
