@@ -1,5 +1,4 @@
 name: Discord Webhook Notification
-#another test
 on:
     pull_request:
         types: [opened]
@@ -18,7 +17,6 @@ jobs:
               uses: sarisia/actions-status-discord@v1
               with:
                   webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-                  status: success
                   title: "🟢 New Pull Request Opened"
                   description: |
                       **${{ github.actor }}** opened a new pull request:
