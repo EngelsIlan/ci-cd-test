@@ -28,7 +28,7 @@ jobs:
                   username: "GitHub Actions Bot"
                   avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
 
-            - name: Send Discord Webhook for Approved Pull Request
+            - name: Send Discord Webhook for Reviewed & Approved Pull Request
               if: ${{ github.event_name == 'pull_request_review' && github.event.review.state == 'approved' }}
               uses: sarisia/actions-status-discord@v1
               with:
