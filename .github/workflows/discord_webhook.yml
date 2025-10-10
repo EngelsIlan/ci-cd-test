@@ -1,30 +1,47 @@
 name: Discord Webhook Notification
-#test
+
 on:
     pull_request:
-        types: [opened, reopened, synchronize, edited]
-        branches:
-            - "**"
+        types: [opened]
+    pull_request_review:
+        types: [submitted]
 
 jobs:
-    notify-pull_request:
+    notify:
         runs-on: ubuntu-latest
         env:
             DISCORD_GREEN: "3066993" # Green color
+            DISCORD_BLUE: "3447003" # Blue color
         steps:
-            - name: Send Discord Webhook for Pull Request
+            - name: Send Discord Webhook for New Pull Request
+              if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
               uses: sarisia/actions-status-discord@v1
               with:
                   webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-                  status: ${{ job.status }}
-                  title: "Pull Request Notification"
+                  status: success
+                  title: "🟢 New Pull Request Opened"
                   description: |
-                      A pull request has been opened or updated by **${{ github.actor }}**.
+                      **${{ github.actor }}** opened a new pull request:
+                      👉 [PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}](${{ github.event.pull_request.html_url }})
 
                       **Branch:** `${{ github.head_ref }}`
                       **Repository:** [${{ github.repository }}](${{ github.server_url }}/${{ github.repository }})
+                  color: "${{ env.DISCORD_BLUE }}"
+                  username: "GitHub Actions Bot"
+                  avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
 
-                      👉 [View Pull Request #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}](${{ github.event.pull_request.html_url }})
+            - name: Send Discord Webhook for Approved Pull Request
+              if: ${{ github.event_name == 'pull_request_review' && github.event.review.state == 'approved' }}
+              uses: sarisia/actions-status-discord@v1
+              with:
+                  webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                  status: success
+                  title: "✅ Pull Request Approved"
+                  description: |
+                      **${{ github.actor }}** approved the pull request:
+                      👉 [PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}](${{ github.event.pull_request.html_url }})
+
+                      **Repository:** [${{ github.repository }}](${{ github.server_url }}/${{ github.repository }})
                   color: "${{ env.DISCORD_GREEN }}"
                   username: "GitHub Actions Bot"
                   avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
