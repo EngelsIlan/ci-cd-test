@@ -1,22 +1,24 @@
 name: Discord Webhook Notification
 
 on:
-    push:
+    pull_request:
         branches:
-            - '**'
+            - "**"
 
 jobs:
     notify-push:
         runs-on: ubuntu-latest
+        env:
+            DISCORD_GREEN: "3066993" # Green color
         steps:
             - name: Send Discord Webhook for Push
               uses: sarisia/actions-status-discord@v1
               with:
-                webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-                status: ${{ job.status }}
-                title: "Push Event Notification"
-                description: "A push has been made to branch: ${{ github.ref_name }} by ${{ github.actor }}."
-                color: "3066993" # Green color
-                url: "${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
-                username: "GitHub Actions Bot"
-                avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+                  webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                  status: ${{ job.status }}
+                  title: "Push Event Notification"
+                  description: "A push has been made to branch: ${{ github.ref_name }} by ${{ github.actor }}."
+                  color: "${{ env.DISCORD_GREEN }}"
+                  url: "${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
+                  username: "GitHub Actions Bot"
+                  avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
