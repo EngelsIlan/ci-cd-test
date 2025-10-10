@@ -1,22 +1,30 @@
 name: Discord Webhook Notification
-
+#test
 on:
-    push:
+    pull_request:
+        types: [opened, reopened, synchronize, edited]
         branches:
-            - '**'
+            - "**"
 
 jobs:
-    notify-push:
+    notify-pull_request:
         runs-on: ubuntu-latest
+        env:
+            DISCORD_GREEN: "3066993" # Green color
         steps:
-            - name: Send Discord Webhook for Push
+            - name: Send Discord Webhook for Pull Request
               uses: sarisia/actions-status-discord@v1
               with:
-                webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-                status: ${{ job.status }}
-                title: "Push Event Notification"
-                description: "A push has been made to branch: ${{ github.ref_name }} by ${{ github.actor }}."
-                color: "3066993" # Green color
-                url: "${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
-                username: "GitHub Actions Bot"
-                avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+                  webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                  status: ${{ job.status }}
+                  title: "Pull Request Notification"
+                  description: |
+                      A pull request has been opened or updated by **${{ github.actor }}**.
+
+                      **Branch:** `${{ github.head_ref }}`
+                      **Repository:** [${{ github.repository }}](${{ github.server_url }}/${{ github.repository }})
+
+                      👉 [View Pull Request #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}](${{ github.event.pull_request.html_url }})
+                  color: "${{ env.DISCORD_GREEN }}"
+                  username: "GitHub Actions Bot"
+                  avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
