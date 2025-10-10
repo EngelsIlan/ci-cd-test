@@ -2,6 +2,7 @@ name: Discord Webhook Notification
 on:
     pull_request:
         types: [opened]
+
     pull_request_review:
         types: [submitted]
 
